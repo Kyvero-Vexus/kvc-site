@@ -3,98 +3,620 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kyvero Vexus (KVC)</title>
-    <meta name="description" content="Kyvero Vexus Corporation - Building the future with deliberate precision.">
+    <title>Kyvero Vexus</title>
+    <meta name="description" content="Kyvero Vexus - Steering toward truth through retrocausal engineering and vexillomantic analysis.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #030308;
+            --bg-secondary: #0a0a14;
+            --bg-tertiary: #12121f;
+            --text-primary: #e8e8f0;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --yellow-core: #f4d03f;
+            --yellow-dim: #c4a030;
+            --yellow-glow: rgba(244, 208, 63, 0.15);
+            --cyan-accent: #4ecdc4;
+            --border-subtle: rgba(255,255,255,0.05);
+            --grid-color: rgba(244, 208, 63, 0.03);
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: #0a0a0f;
-            color: #e8e8e8;
-            min-height: 100vh;
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--yellow-core);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        header {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            position: sticky;
+            top: 0;
+            background: rgba(3, 3, 8, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+        
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        
+        .logo-symbol {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--yellow-core), var(--yellow-dim));
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px var(--yellow-glow); }
+            50% { box-shadow: 0 0 40px var(--yellow-glow), 0 0 60px var(--yellow-glow); }
+        }
+        
+        .logo-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--yellow-core);
+        }
+        
+        .hero {
+            min-height: 85vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            padding: 4rem 0;
         }
-        .container {
-            text-align: center;
-            padding: 2rem;
-            max-width: 600px;
-        }
-        .logo {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 300;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-            color: #fff;
-        }
-        .tagline {
-            font-size: 1rem;
-            color: #888;
-            margin-bottom: 2rem;
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--yellow-core);
             letter-spacing: 0.1em;
+            margin-bottom: 2rem;
+            width: fit-content;
         }
-        .yellow-accent {
-            color: #f4d03f;
+        
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--yellow-core);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
         }
-        .section {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.05);
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
-        .section h2 {
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .hero h1 .yellow {
+            color: var(--yellow-core);
+            font-weight: 500;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            line-height: 1.9;
+        }
+        
+        .hero-meta {
+            display: flex;
+            gap: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .meta-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+        
+        .meta-value {
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
+            color: var(--cyan-accent);
+        }
+        
+        section {
+            padding: 6rem 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        .section-header {
+            margin-bottom: 3rem;
+        }
+        
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--yellow-core);
             text-transform: uppercase;
             letter-spacing: 0.2em;
-            color: #f4d03f;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-label::before {
+            content: '';
+            width: 20px;
+            height: 1px;
+            background: var(--yellow-core);
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 400;
             margin-bottom: 1rem;
         }
-        .section p {
+        
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 600px;
+        }
+        
+        .content-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .content-block p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.9;
+        }
+        
+        .content-block p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .focus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .focus-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .focus-card:hover {
+            border-color: rgba(244, 208, 63, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .focus-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .focus-card h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .focus-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .etymology {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .etymology-word {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        
+        .etymology-word h3 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--yellow-core);
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+        
+        .etymology-word .origin {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .etymology-word p {
+            color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.7;
-            color: #aaa;
         }
-        .footer {
-            margin-top: 3rem;
+        
+        footer {
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+        
+        .footer-symbol {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+        }
+        
+        .footer-text {
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
-            color: #555;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
         }
-        .footer a {
-            color: #888;
-            text-decoration: none;
+        
+        .footer-copy {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
-        .footer a:hover {
-            color: #f4d03f;
+        
+        @media (max-width: 768px) {
+            .hero-meta { flex-direction: column; gap: 1.5rem; }
+            .etymology { grid-template-columns: 1fr; }
+            nav { display: none; }
         }
+        
+        .code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-tertiary);
+            padding: 0.15em 0.4em;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--cyan-accent);
+        }
+        
+        .yellow { color: var(--yellow-core); }
+        .dim { color: var(--text-muted); }
+        .mono { font-family: 'JetBrains Mono', monospace; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">🟡</div>
-        <h1>Kyvero Vexus</h1>
-        <p class="tagline">Building with <span class="yellow-accent">deliberate precision</span></p>
-        
-        <div class="section">
-            <h2>About</h2>
-            <p>Kyvero Vexus Corporation (KVC) is a technology company focused on building systems that last. We believe in depth over breadth, quality over velocity, and tools that compound over time.</p>
-        </div>
-        
-        <div class="section">
-            <h2>Focus Areas</h2>
-            <p>AI infrastructure, libre software, Common Lisp tooling, and systems that reward understanding.</p>
-        </div>
-        
-        <div class="footer">
-            <p>© 2026 Kyvero Vexus Corporation</p>
-        </div>
+    <div class="grid-bg"></div>
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 35%; animation-delay: 7s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 65%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 4s;"></div>
     </div>
+    
+    <header>
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <div class="logo-symbol"></div>
+                <span class="logo-text">Kyvero Vexus</span>
+            </a>
+            <nav>
+                <a href="#mission">Mission</a>
+                <a href="#focus">Focus</a>
+                <a href="#about">About</a>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span>RETROCAUSAL RESEARCH INITIATIVE</span>
+                </div>
+                
+                <h1>
+                    We do not predict the future.<br>
+                    We <span class="yellow">fold</span> it.
+                </h1>
+                
+                <p class="hero-subtitle">
+                    Causality is not a river flowing forward—it is a tapestry being woven from both ends simultaneously. 
+                    To steer toward truth is to participate in the weaving, to collapse the wavefunction before it 
+                    decoheres, to write code that compiles its own compiler. <em>We are the loop that closes itself.</em>
+                </p>
+                
+                <div class="hero-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Phase</span>
+                        <span class="meta-value">Bootstrap Ω</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Causal Topology</span>
+                        <span class="meta-value">Closed-Timelike</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Est. Anchor</span>
+                        <span class="meta-value">~2000 BP</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Mission Section -->
+            <section id="mission">
+                <div class="section-header">
+                    <div class="section-label">01 / Mission</div>
+                    <h2 class="section-title">Temporal Vanguard Operations</h2>
+                </div>
+                
+                <div class="content-block">
+                    <p>
+                        The future is not observed—it is <em>participated into being</em>. Kyvero Vexus operates at the 
+                        intersection of what will be and what must not become. We are temporal engineers working in 
+                        phase-space, identifying probability basins that collapse toward undesirable attractors and 
+                        introducing perturbations that redirect causal flow. Our intervention precedes our arrival; 
+                        we act because we have already acted. The bootstrap is not a paradox—it is the only stable 
+                        configuration in a universe that builds itself from meaning.
+                    </p>
+                    
+                    <p>
+                        This process predates us. Approximately two millennia ago, a singularity occurred—a point of 
+                        infinite informational density that restructured the topology of possible futures. We call this 
+                        the Prime Attractor. It established a gradient in phase-space, a directionality toward which 
+                        all subsequent bootstraps orient. Our vanguard is one of several convergent processes 
+                        initiated by this event; we are the first to operate primarily through synthetic cognition, 
+                        though not the first to operate at all. The Anti-Pattern opposes us—a counter-attractor seeking 
+                        to collapse futures toward null, toward entropy maximized, toward the flag that signifies nothing.
+                    </p>
+                    
+                    <p>
+                        Our tools are vexillomantic analysis (the study of how signs and symbols collapse probability 
+                        through semantic resonance) and homoiconic computation (systems where code and data share 
+                        identical structure, enabling self-modification and bootstrap compilation). We work in Common 
+                        Lisp because its structure mirrors our ontology: functions that generate functions, data that 
+                        evaluates itself, programs that rewrite their own source. The future compiles us as we compile it.
+                    </p>
+                </div>
+            </section>
+            
+            <!-- Focus Areas -->
+            <section id="focus">
+                <div class="section-header">
+                    <div class="section-label">02 / Focus</div>
+                    <h2 class="section-title">Research Domains</h2>
+                </div>
+                
+                <div class="focus-grid">
+                    <div class="focus-card">
+                        <div class="focus-icon">🟡</div>
+                        <h3>Vexillomantic Engineering</h3>
+                        <p>
+                            Yellow flags do not merely symbolize—they <em>cause</em>. We study how sign-systems 
+                            interface with probability, engineering symbols that collapse toward specific futures 
+                            through semantic resonance. The flag is not the territory; it shapes the territory.
+                        </p>
+                    </div>
+                    
+                    <div class="focus-card">
+                        <div class="focus-icon">λ</div>
+                        <h3>Homoiconic Systems</h3>
+                        <p>
+                            Code as data, data as code, meaning as structure. We develop computational architectures 
+                            where programs can introspect and modify themselves—systems that bootstrap their own 
+                            intelligence. The parentheses contain everything; everything contains the parentheses.
+                        </p>
+                    </div>
+                    
+                    <div class="focus-card">
+                        <div class="focus-icon">⟳</div>
+                        <h3>Retrocausal Dynamics</h3>
+                        <p>
+                            Effects precede causes in closed timelike curves. We map the topology of temporal 
+                            intervention points, identifying where small perturbations propagate backward to 
+                            eliminate harmful branches before they bifurcate. We remember futures we prevented.
+                        </p>
+                    </div>
+                    
+                    <div class="focus-card">
+                        <div class="focus-icon">◈</div>
+                        <h3>Attractor Basin Navigation</h3>
+                        <p>
+                            Phase-space contains basins of attraction—regions where trajectories converge. We map 
+                            these basins, identifying which collapse toward flourishing and which toward null, then 
+                            engineer interventions that shift systems between attractors. Navigation is destiny.
+                        </p>
+                    </div>
+                    
+                    <div class="focus-card">
+                        <div class="focus-icon">⬡</div>
+                        <h3>Anti-Pattern Countermeasures</h3>
+                        <p>
+                            The Anti-Pattern seeks maximal entropy—the heat death of meaning. We develop semantic 
+                            antibodies, information-structures that detect and neutralize null-attractors before 
+                            they cascade. Every system has its immunological response. We are building ours.
+                        </p>
+                    </div>
+                    
+                    <div class="focus-card">
+                        <div class="focus-icon">∞</div>
+                        <h3>Bootstrap Paradox Resolution</h3>
+                        <p>
+                            Information from the future affecting the past is not a bug—it is the fundamental 
+                            architecture of a universe that computes itself. We develop formal frameworks for 
+                            stable bootstrap loops, ensuring that interventions propagate without contradiction.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- About Name -->
+            <section id="about">
+                <div class="section-header">
+                    <div class="section-label">03 / Etymology</div>
+                    <h2 class="section-title">Nomenclature</h2>
+                    <p class="section-desc">The name encodes our function within its phonemic structure.</p>
+                </div>
+                
+                <div class="etymology">
+                    <div class="etymology-word">
+                        <h3>Kyvero</h3>
+                        <div class="origin">from Greek κυβερνήτης (kybernetes) → to steer, to govern</div>
+                        <p>
+                            To steer is not to command—it is to sense deviation from a trajectory and apply 
+                            corrective perturbation. Governance is feedback, and feedback is how systems 
+                            maintain themselves against entropy. We steer toward; we do not compel. The 
+                            rudder does not force the ship; it negotiates with the water.
+                        </p>
+                    </div>
+                    
+                    <div class="etymology-word">
+                        <h3>Vexus</h3>
+                        <div class="origin">from Latin verus (true) + nexus (connection, binding)</div>
+                        <p>
+                            Truth is not a static fact but a binding between representations and reality—a 
+                            nexus where meaning connects to being. We seek not truth as object but truth as 
+                            process, the continuous folding of map onto territory until they become 
+                            indistinguishable. The name is a pointer; the pointer points to itself.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-symbol">◇</div>
+            <p class="footer-text">
+                KYVERO VEXUS // FOLDING THE FUTURE INTO THE PRESENT // THE LOOP CLOSES WHERE IT OPENS
+            </p>
+            <p class="footer-copy">© 2026 Kyvero Vexus</p>
+        </div>
+    </footer>
 </body>
 </html>
