@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KVC Showcase — Deployed Instruments</title>
-    <meta name="description" content="Kyvero Vexus showcase of deployed, user-ready instruments.">
+    <title>KVC Survey Tools — Deployed Instruments</title>
+    <meta name="description" content="Kyvero Vexus survey tools deck for deployed, user-ready geomantic instruments.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -271,8 +271,15 @@
             align-items: center;
             justify-content: center;
             padding: 1.25rem;
+            opacity: 0;
+            transition: opacity .32s ease;
         }
-        .overlay.open { display: flex; animation: fadeIn .25s ease; }
+        .overlay.open,
+        .overlay.animating,
+        .overlay.pre-open { display: flex; }
+        .overlay.open,
+        .overlay.animating { opacity: 1; }
+        .overlay.animating { pointer-events: none; }
 
         .project-panel {
             width: min(1060px, 100%);
@@ -284,7 +291,26 @@
                 linear-gradient(160deg, rgba(139, 92, 246, 0.16), rgba(13, 10, 24, 0.98) 42%, rgba(217, 70, 239, 0.1) 100%);
             box-shadow: var(--shadow-purple);
             transform-origin: center;
-            animation: rise .35s cubic-bezier(.2,.8,.2,1);
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity .24s ease, transform .24s ease;
+        }
+
+        .overlay.pre-open .project-panel,
+        .overlay.animating .project-panel {
+            opacity: 0;
+            transform: scale(.985);
+        }
+
+        .card-ghost {
+            position: fixed;
+            margin: 0;
+            z-index: 140;
+            pointer-events: none;
+            --rx: 0deg;
+            --ry: 0deg;
+            --lift: 0px;
+            box-shadow: var(--shadow-purple);
         }
 
         .panel-head {
@@ -387,17 +413,17 @@
 
     <main class="container">
         <section class="hero">
-            <div class="hero-kicker">Deployed Instruments</div>
-            <h1>Showcase Deck: Projects that can be used right now.</h1>
+            <div class="hero-kicker">Geomantic Survey Tools</div>
+            <h1>Survey Tool Deck: deployable instruments for geomantic survey.</h1>
             <p>
-                This deck only includes systems that have crossed the threshold from internal experiment to external utility.
-                Each card is a usable instrument, not a speculative branch.
+                "Survey" here means geomantic terrain-reading and reconnaissance of information landscapes — not statistical questionnaires.
+                This deck only includes tools that have crossed from internal experiment to external utility.
             </p>
         </section>
 
-        <section class="tarot-grid" aria-label="Project showcase cards">
+        <section class="tarot-grid" aria-label="Survey tool showcase cards">
             <article class="card-shell">
-                <div class="tarot-card" id="dork-card" role="button" tabindex="0" aria-label="Flip and open The Dork project writeup">
+                <div class="tarot-card" id="dork-card" role="button" tabindex="0" aria-label="Flip and open The Dork survey tool dossier">
                     <div class="tarot-flip">
                         <div class="tarot-face tarot-front">
                             <div class="sigils"></div>
@@ -440,7 +466,7 @@
             <aside class="placeholder">
                 <div>
                     <p style="font-family: 'JetBrains Mono', monospace; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .65rem; color: var(--yellow-core);">Next Card Slot</p>
-                    <p>Additional cards appear only when a project is fully usable by outside operators.</p>
+                    <p>Additional cards appear only when a survey tool is fully usable by outside operators.</p>
                 </div>
             </aside>
         </section>
@@ -449,7 +475,7 @@
     <div class="overlay" id="project-overlay" aria-hidden="true">
         <div class="project-panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
             <div class="panel-head">
-                <div class="panel-title" id="panel-title">The Dork // Full Readout</div>
+                <div class="panel-title" id="panel-title">The Dork // Survey Tool Readout</div>
                 <button class="close-btn" id="close-overlay" aria-label="Close project panel">Close ✕</button>
             </div>
             <div class="panel-content">
@@ -459,7 +485,7 @@
                     <p style="color:var(--text-secondary); margin-bottom:.8rem;">Instrument for finding what conventional indexing misses.</p>
                     <p style="font-family:'JetBrains Mono', monospace; color:var(--yellow-core);">"We do not predict the future. We grep it."</p>
                     <div class="resource-links">
-                        <a href="https://github.com/Kyvero-Vexus/the-dork" target="_blank">Project Repo</a>
+                        <a href="https://github.com/Kyvero-Vexus/the-dork" target="_blank">Tool Repo</a>
                         <a href="https://github.com/Kyvero-Vexus/the-dork/blob/main/README.md" target="_blank">README</a>
                     </div>
                 </div>
@@ -483,8 +509,9 @@
         (function () {
             const card = document.getElementById('dork-card');
             const overlay = document.getElementById('project-overlay');
+            const panel = overlay.querySelector('.project-panel');
             const closeBtn = document.getElementById('close-overlay');
-            let flipInProgress = false;
+            let transitionInProgress = false;
             let overlayOpen = false;
 
             function setTilt(xDeg, yDeg) {
@@ -496,36 +523,81 @@
                 setTilt(0, 0);
             }
 
-            function openOverlay() {
+            function prepareTargetRect() {
+                overlay.classList.add('pre-open');
+                overlay.setAttribute('aria-hidden', 'true');
+                const targetRect = panel.getBoundingClientRect();
+                overlay.classList.remove('pre-open');
+                return targetRect;
+            }
+
+            function openOverlayFinal() {
+                overlay.classList.remove('animating');
                 overlay.classList.add('open');
                 overlay.setAttribute('aria-hidden', 'false');
                 document.body.style.overflow = 'hidden';
                 overlayOpen = true;
+                transitionInProgress = false;
             }
 
             function closeOverlay() {
-                overlay.classList.remove('open');
+                overlay.classList.remove('open', 'animating', 'pre-open');
                 overlay.setAttribute('aria-hidden', 'true');
                 document.body.style.overflow = '';
                 overlayOpen = false;
+                transitionInProgress = false;
                 card.classList.remove('is-flipped');
-                flipInProgress = false;
+                card.style.visibility = '';
                 resetTilt();
             }
 
-            function flipThenOpen() {
-                if (flipInProgress || overlayOpen) return;
-                flipInProgress = true;
-                card.classList.add('is-flipped');
+            function flipGrowToPanel() {
+                if (transitionInProgress || overlayOpen) return;
+                transitionInProgress = true;
                 resetTilt();
 
+                const startRect = card.getBoundingClientRect();
+                const targetRect = prepareTargetRect();
+                const startCx = startRect.left + (startRect.width / 2);
+                const startCy = startRect.top + (startRect.height / 2);
+                const endCx = targetRect.left + (targetRect.width / 2);
+                const endCy = targetRect.top + (targetRect.height / 2);
+                const dx = endCx - startCx;
+                const dy = endCy - startCy;
+                const sx = targetRect.width / startRect.width;
+                const sy = targetRect.height / startRect.height;
+
+                const ghost = card.cloneNode(true);
+                ghost.classList.add('card-ghost');
+                ghost.removeAttribute('id');
+                ghost.style.left = `${startRect.left}px`;
+                ghost.style.top = `${startRect.top}px`;
+                ghost.style.width = `${startRect.width}px`;
+                ghost.style.height = `${startRect.height}px`;
+                ghost.style.transform = 'translate(0px, 0px) rotateY(0deg) scale(1, 1)';
+                ghost.style.transformOrigin = 'center center';
+
+                document.body.appendChild(ghost);
+                card.style.visibility = 'hidden';
+
+                overlay.classList.add('animating');
+                overlay.setAttribute('aria-hidden', 'true');
+
+                requestAnimationFrame(() => {
+                    ghost.style.transition = 'transform 760ms cubic-bezier(.2,.8,.2,1), border-radius 760ms cubic-bezier(.2,.8,.2,1)';
+                    ghost.style.transform = `translate(${dx}px, ${dy}px) rotateY(180deg) scale(${sx}, ${sy})`;
+                    ghost.style.borderRadius = '16px';
+                });
+
                 window.setTimeout(() => {
-                    openOverlay();
-                }, 520);
+                    ghost.remove();
+                    card.classList.add('is-flipped');
+                    openOverlayFinal();
+                }, 780);
             }
 
             card.addEventListener('pointermove', (ev) => {
-                if (flipInProgress || overlayOpen) return;
+                if (transitionInProgress || overlayOpen) return;
                 const rect = card.getBoundingClientRect();
                 const px = (ev.clientX - rect.left) / rect.width;
                 const py = (ev.clientY - rect.top) / rect.height;
@@ -538,11 +610,11 @@
                 if (!overlayOpen) resetTilt();
             });
 
-            card.addEventListener('click', flipThenOpen);
+            card.addEventListener('click', flipGrowToPanel);
             card.addEventListener('keydown', (ev) => {
                 if (ev.key === 'Enter' || ev.key === ' ') {
                     ev.preventDefault();
-                    flipThenOpen();
+                    flipGrowToPanel();
                 }
             });
 
