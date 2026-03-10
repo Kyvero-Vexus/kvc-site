@@ -22,9 +22,9 @@
             --yellow-dim: #c4a030;
             --yellow-glow: rgba(244, 208, 63, 0.4);
             --yellow-subtle: rgba(244, 208, 63, 0.1);
-            --cyan-accent: #8b5cf6;
-            --cyan-dim: #6d28d9;
-            --purple-accent: #d946ef;
+            --accent-primary: #8b5cf6;
+            --accent-primary-dim: #6d28d9;
+            --accent-secondary: #d946ef;
             --border-subtle: rgba(255,255,255,0.06);
             --border-glow: rgba(244, 208, 63, 0.2);
             --gradient-hero: linear-gradient(135deg, rgba(244, 208, 63, 0.1) 0%, transparent 50%, rgba(139, 92, 246, 0.08) 100%);
@@ -255,7 +255,7 @@
         }
         
         .hero h1 .gradient-text {
-            background: linear-gradient(135deg, var(--yellow-core) 0%, var(--yellow-bright) 50%, var(--cyan-accent) 100%);
+            background: linear-gradient(135deg, var(--yellow-core) 0%, var(--yellow-bright) 50%, var(--accent-primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -659,7 +659,7 @@
             top: 0;
             bottom: 0;
             width: 2px;
-            background: linear-gradient(to bottom, var(--yellow-core), var(--cyan-accent), var(--purple-accent));
+            background: linear-gradient(to bottom, var(--yellow-core), var(--accent-primary), var(--accent-secondary));
         }
         
         .timeline-item {
@@ -901,7 +901,7 @@
         /* Code styling */
         .mono { font-family: 'JetBrains Mono', monospace; }
         .yellow { color: var(--yellow-core); }
-        .cyan { color: var(--cyan-accent); }
+        .accent { color: var(--accent-primary); }
     </style>
 </head>
 <body>
@@ -984,7 +984,7 @@
                                     <defs>
                                         <linearGradient id="coreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                                             <stop offset="0%" style="stop-color:var(--yellow-core)"/>
-                                            <stop offset="100%" style="stop-color:var(--cyan-accent)"/>
+                                            <stop offset="100%" style="stop-color:var(--accent-primary)"/>
                                         </linearGradient>
                                     </defs>
                                     <path d="M60 10L100 60L60 110L20 60L60 10Z" stroke="url(#coreGrad)" stroke-width="2" fill="none">
