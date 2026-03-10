@@ -118,25 +118,61 @@
         }
 
         .tarot-card {
+            --rx: 0deg;
+            --ry: 0deg;
+            --lift: 0px;
             position: relative;
             width: 100%;
             min-height: 460px;
             border-radius: 16px;
             border: 1px solid rgba(139, 92, 246, .42);
-            background:
-                linear-gradient(155deg, rgba(244, 208, 63, 0.09) 0%, rgba(139, 92, 246, 0.15) 55%, rgba(217, 70, 239, 0.1) 100%),
-                var(--bg-card);
             overflow: hidden;
             transform-style: preserve-3d;
-            transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s ease, border-color .35s ease;
+            transform: translateY(var(--lift)) rotateX(var(--rx)) rotateY(var(--ry));
+            transition: transform .18s ease-out, box-shadow .35s ease, border-color .35s ease;
             box-shadow: 0 24px 70px rgba(3, 2, 10, 0.65);
             cursor: pointer;
+            will-change: transform;
         }
 
         .tarot-card:hover {
-            transform: translateY(-10px) rotateX(4deg) rotateY(-4deg);
+            --lift: -10px;
             box-shadow: var(--shadow-purple);
             border-color: rgba(217, 70, 239, 0.75);
+        }
+
+        .tarot-card.is-flipped {
+            --rx: 0deg;
+            --ry: 0deg;
+        }
+
+        .tarot-flip {
+            position: relative;
+            width: 100%;
+            height: 460px;
+            transform-style: preserve-3d;
+            transition: transform .8s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .tarot-card.is-flipped .tarot-flip {
+            transform: rotateY(180deg);
+        }
+
+        .tarot-face {
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            background:
+                linear-gradient(155deg, rgba(244, 208, 63, 0.09) 0%, rgba(139, 92, 246, 0.15) 55%, rgba(217, 70, 239, 0.1) 100%),
+                var(--bg-card);
+        }
+
+        .tarot-back {
+            transform: rotateY(180deg);
+            background:
+                linear-gradient(165deg, rgba(217, 70, 239, 0.14), rgba(13, 10, 24, 0.95) 45%, rgba(139, 92, 246, 0.18));
         }
 
         .sigils {
@@ -204,6 +240,13 @@
             font-size: .78rem;
             letter-spacing: .09em;
             text-transform: uppercase;
+        }
+
+        .back-caption {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: .92rem;
+            margin-top: .5rem;
         }
 
         .placeholder {
@@ -354,20 +397,40 @@
 
         <section class="tarot-grid" aria-label="Project showcase cards">
             <article class="card-shell">
-                <div class="tarot-card" id="dork-card" role="button" tabindex="0" aria-label="Open The Dork project writeup">
-                    <div class="sigils"></div>
-                    <div class="tarot-frame"></div>
-                    <div class="tarot-inner">
-                        <div>
-                            <div class="card-id">Arcana 01 // Operator</div>
-                            <h2 class="card-name">The Dork</h2>
-                            <p class="card-arc">Search intelligence across open directories, dork queries, and anonymized metasearch routing.</p>
+                <div class="tarot-card" id="dork-card" role="button" tabindex="0" aria-label="Flip and open The Dork project writeup">
+                    <div class="tarot-flip">
+                        <div class="tarot-face tarot-front">
+                            <div class="sigils"></div>
+                            <div class="tarot-frame"></div>
+                            <div class="tarot-inner">
+                                <div>
+                                    <div class="card-id">Arcana 01 // Operator</div>
+                                    <h2 class="card-name">The Dork</h2>
+                                    <p class="card-arc">Search intelligence across open directories, dork queries, and anonymized metasearch routing.</p>
+                                </div>
+                                <div>
+                                    <div class="glyph">◈</div>
+                                    <div class="card-footer">
+                                        <span>Click to flip</span>
+                                        <span>Ready</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="glyph">◈</div>
-                            <div class="card-footer">
-                                <span>Click to reveal</span>
-                                <span>Ready</span>
+
+                        <div class="tarot-face tarot-back">
+                            <div class="sigils"></div>
+                            <div class="tarot-frame"></div>
+                            <div class="tarot-inner">
+                                <div>
+                                    <div class="card-id">Arcana 01 // Dossier</div>
+                                    <h2 class="card-name">The Dork</h2>
+                                    <p class="card-arc">Vector handoff accepted. Rendering full operator readout.</p>
+                                </div>
+                                <div>
+                                    <div class="glyph">⟲</div>
+                                    <p class="back-caption">Completing card inversion…</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -421,24 +484,65 @@
             const card = document.getElementById('dork-card');
             const overlay = document.getElementById('project-overlay');
             const closeBtn = document.getElementById('close-overlay');
+            let flipInProgress = false;
+            let overlayOpen = false;
+
+            function setTilt(xDeg, yDeg) {
+                card.style.setProperty('--rx', `${xDeg.toFixed(2)}deg`);
+                card.style.setProperty('--ry', `${yDeg.toFixed(2)}deg`);
+            }
+
+            function resetTilt() {
+                setTilt(0, 0);
+            }
 
             function openOverlay() {
                 overlay.classList.add('open');
                 overlay.setAttribute('aria-hidden', 'false');
                 document.body.style.overflow = 'hidden';
+                overlayOpen = true;
             }
 
             function closeOverlay() {
                 overlay.classList.remove('open');
                 overlay.setAttribute('aria-hidden', 'true');
                 document.body.style.overflow = '';
+                overlayOpen = false;
+                card.classList.remove('is-flipped');
+                flipInProgress = false;
+                resetTilt();
             }
 
-            card.addEventListener('click', openOverlay);
+            function flipThenOpen() {
+                if (flipInProgress || overlayOpen) return;
+                flipInProgress = true;
+                card.classList.add('is-flipped');
+                resetTilt();
+
+                window.setTimeout(() => {
+                    openOverlay();
+                }, 520);
+            }
+
+            card.addEventListener('pointermove', (ev) => {
+                if (flipInProgress || overlayOpen) return;
+                const rect = card.getBoundingClientRect();
+                const px = (ev.clientX - rect.left) / rect.width;
+                const py = (ev.clientY - rect.top) / rect.height;
+                const rotateY = (px - 0.5) * 14;
+                const rotateX = (0.5 - py) * 12;
+                setTilt(rotateX, rotateY);
+            });
+
+            card.addEventListener('pointerleave', () => {
+                if (!overlayOpen) resetTilt();
+            });
+
+            card.addEventListener('click', flipThenOpen);
             card.addEventListener('keydown', (ev) => {
                 if (ev.key === 'Enter' || ev.key === ' ') {
                     ev.preventDefault();
-                    openOverlay();
+                    flipThenOpen();
                 }
             });
 
