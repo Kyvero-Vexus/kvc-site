@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVC Showcase — Deployed Instruments</title>
+    <meta name="description" content="Kyvero Vexus showcase of deployed, user-ready instruments.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #03020a;
+            --bg-primary: #070510;
+            --bg-card: #0d0a18;
+            --bg-card-hover: #120f24;
+            --text-primary: #f0f0f8;
+            --text-secondary: #9a90b6;
+            --text-muted: #5a506e;
+            --yellow-core: #f4d03f;
+            --yellow-bright: #ffe066;
+            --yellow-subtle: rgba(244, 208, 63, 0.1);
+            --accent-primary: #8b5cf6;
+            --accent-primary-dim: #6d28d9;
+            --accent-secondary: #d946ef;
+            --border-subtle: rgba(255,255,255,0.07);
+            --shadow-purple: 0 30px 80px rgba(109, 40, 217, 0.28);
+            --shadow-yellow: 0 0 40px rgba(244, 208, 63, 0.25);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { min-height: 100%; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.14), transparent 45%),
+                radial-gradient(circle at 80% 15%, rgba(217, 70, 239, 0.12), transparent 38%),
+                var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            backdrop-filter: blur(14px);
+            background: rgba(7, 5, 16, 0.75);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+        .logo { color: var(--text-primary); text-decoration: none; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+        .nav-actions { display: flex; gap: 0.75rem; }
+        .btn {
+            text-decoration: none;
+            border-radius: 8px;
+            padding: 0.65rem 1rem;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        }
+        .btn-primary { background: var(--yellow-core); color: #1f1a07; font-weight: 600; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-yellow); }
+        .btn-secondary { color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+        .btn-secondary:hover { border-color: var(--accent-primary); color: var(--text-primary); }
+
+        .hero { padding: 5rem 0 2.25rem; }
+        .hero-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .72rem;
+            letter-spacing: .14em;
+            color: var(--yellow-core);
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+        }
+        .hero-kicker::before {
+            content: '';
+            width: 28px;
+            height: 1px;
+            background: var(--yellow-core);
+        }
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 1.2rem;
+            max-width: 900px;
+        }
+        .hero p {
+            color: var(--text-secondary);
+            max-width: 760px;
+            font-size: 1.08rem;
+        }
+
+        .tarot-grid {
+            margin: 3rem 0 5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.75rem;
+            align-items: start;
+        }
+
+        .card-shell {
+            perspective: 1400px;
+            min-height: 460px;
+        }
+
+        .tarot-card {
+            position: relative;
+            width: 100%;
+            min-height: 460px;
+            border-radius: 16px;
+            border: 1px solid rgba(139, 92, 246, .42);
+            background:
+                linear-gradient(155deg, rgba(244, 208, 63, 0.09) 0%, rgba(139, 92, 246, 0.15) 55%, rgba(217, 70, 239, 0.1) 100%),
+                var(--bg-card);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s ease, border-color .35s ease;
+            box-shadow: 0 24px 70px rgba(3, 2, 10, 0.65);
+            cursor: pointer;
+        }
+
+        .tarot-card:hover {
+            transform: translateY(-10px) rotateX(4deg) rotateY(-4deg);
+            box-shadow: var(--shadow-purple);
+            border-color: rgba(217, 70, 239, 0.75);
+        }
+
+        .sigils {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .45;
+            background-image:
+                radial-gradient(circle at 20% 12%, rgba(244,208,63,.9) 0 2px, transparent 3px),
+                radial-gradient(circle at 78% 24%, rgba(217,70,239,.7) 0 2px, transparent 3px),
+                radial-gradient(circle at 18% 78%, rgba(139,92,246,.75) 0 1.5px, transparent 3px),
+                radial-gradient(circle at 70% 84%, rgba(244,208,63,.75) 0 1.5px, transparent 3px);
+        }
+
+        .tarot-frame {
+            position: absolute;
+            inset: 14px;
+            border: 1px solid rgba(244, 208, 63, .35);
+            border-radius: 12px;
+        }
+
+        .tarot-inner {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .72rem;
+            color: var(--yellow-core);
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+
+        .card-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin: .85rem 0 .75rem;
+        }
+
+        .card-arc {
+            color: var(--text-secondary);
+            font-size: .92rem;
+        }
+
+        .glyph {
+            margin: 1.25rem 0 1rem;
+            font-size: 3rem;
+            color: var(--yellow-core);
+            text-shadow: 0 0 22px rgba(244,208,63,.35);
+            text-align: center;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: .78rem;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+        }
+
+        .placeholder {
+            min-height: 460px;
+            border: 1px dashed rgba(139, 92, 246, .45);
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            color: var(--text-muted);
+            background: rgba(13, 10, 24, .7);
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 2, 10, .88);
+            backdrop-filter: blur(10px);
+            z-index: 90;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem;
+        }
+        .overlay.open { display: flex; animation: fadeIn .25s ease; }
+
+        .project-panel {
+            width: min(1060px, 100%);
+            max-height: 92vh;
+            overflow: auto;
+            border-radius: 16px;
+            border: 1px solid rgba(139, 92, 246, .6);
+            background:
+                linear-gradient(160deg, rgba(139, 92, 246, 0.16), rgba(13, 10, 24, 0.98) 42%, rgba(217, 70, 239, 0.1) 100%);
+            box-shadow: var(--shadow-purple);
+            transform-origin: center;
+            animation: rise .35s cubic-bezier(.2,.8,.2,1);
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+            position: sticky;
+            top: 0;
+            background: rgba(10, 7, 20, 0.86);
+            backdrop-filter: blur(8px);
+        }
+
+        .panel-title { font-size: 1.15rem; font-weight: 600; }
+
+        .close-btn {
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-secondary);
+            padding: .45rem .65rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .panel-content {
+            padding: 1.2rem 1.25rem 1.6rem;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 1.25rem;
+        }
+
+        .panel-card {
+            border: 1px solid rgba(244, 208, 63, .35);
+            border-radius: 12px;
+            min-height: 400px;
+            padding: 1rem;
+            background: rgba(13, 10, 24, .72);
+            position: sticky;
+            top: 4.8rem;
+        }
+
+        .panel-text p { margin-bottom: 1rem; color: var(--text-secondary); }
+        .panel-text p strong { color: var(--yellow-bright); font-weight: 600; }
+
+        .meta-line {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--yellow-core);
+            letter-spacing: .08em;
+            font-size: .75rem;
+            margin-bottom: .9rem;
+            text-transform: uppercase;
+        }
+
+        .resource-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .7rem;
+            margin-top: 1.2rem;
+        }
+
+        .resource-links a {
+            display: inline-flex;
+            text-decoration: none;
+            border: 1px solid rgba(217,70,239,.48);
+            color: var(--text-primary);
+            padding: .5rem .8rem;
+            border-radius: 999px;
+            font-size: .8rem;
+        }
+
+        .resource-links a:hover {
+            border-color: var(--yellow-core);
+            color: var(--yellow-core);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes rise {
+            from { opacity: .2; transform: scale(.97) rotateX(-3deg); }
+            to { opacity: 1; transform: scale(1) rotateX(0); }
+        }
+
+        @media (max-width: 900px) {
+            .panel-content { grid-template-columns: 1fr; }
+            .panel-card { position: relative; top: auto; min-height: auto; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container nav-inner">
+            <a class="logo" href="index.html">Kyvero Vexus</a>
+            <div class="nav-actions">
+                <a class="btn btn-secondary" href="index.html">Main Site</a>
+                <a class="btn btn-primary" href="https://github.com/Kyvero-Vexus" target="_blank">GitHub Org</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-kicker">Deployed Instruments</div>
+            <h1>Showcase Deck: Projects that can be used right now.</h1>
+            <p>
+                This deck only includes systems that have crossed the threshold from internal experiment to external utility.
+                Each card is a usable instrument, not a speculative branch.
+            </p>
+        </section>
+
+        <section class="tarot-grid" aria-label="Project showcase cards">
+            <article class="card-shell">
+                <div class="tarot-card" id="dork-card" role="button" tabindex="0" aria-label="Open The Dork project writeup">
+                    <div class="sigils"></div>
+                    <div class="tarot-frame"></div>
+                    <div class="tarot-inner">
+                        <div>
+                            <div class="card-id">Arcana 01 // Operator</div>
+                            <h2 class="card-name">The Dork</h2>
+                            <p class="card-arc">Search intelligence across open directories, dork queries, and anonymized metasearch routing.</p>
+                        </div>
+                        <div>
+                            <div class="glyph">◈</div>
+                            <div class="card-footer">
+                                <span>Click to reveal</span>
+                                <span>Ready</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <aside class="placeholder">
+                <div>
+                    <p style="font-family: 'JetBrains Mono', monospace; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .65rem; color: var(--yellow-core);">Next Card Slot</p>
+                    <p>Additional cards appear only when a project is fully usable by outside operators.</p>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <div class="overlay" id="project-overlay" aria-hidden="true">
+        <div class="project-panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+            <div class="panel-head">
+                <div class="panel-title" id="panel-title">The Dork // Full Readout</div>
+                <button class="close-btn" id="close-overlay" aria-label="Close project panel">Close ✕</button>
+            </div>
+            <div class="panel-content">
+                <div class="panel-card">
+                    <div class="meta-line">Vector: Operator / Researcher</div>
+                    <h3 style="font-size:1.35rem; margin-bottom:.45rem;">The Dork</h3>
+                    <p style="color:var(--text-secondary); margin-bottom:.8rem;">Instrument for finding what conventional indexing misses.</p>
+                    <p style="font-family:'JetBrains Mono', monospace; color:var(--yellow-core);">"We do not predict the future. We grep it."</p>
+                    <div class="resource-links">
+                        <a href="https://github.com/Kyvero-Vexus/the-dork" target="_blank">Project Repo</a>
+                        <a href="https://github.com/Kyvero-Vexus/the-dork/blob/main/README.md" target="_blank">README</a>
+                    </div>
+                </div>
+
+                <div class="panel-text">
+                    <p><strong>Semion field note:</strong> Most search stacks are built for consensus knowledge—the polished and index-friendly layer of the web. The Dork is built for the layer below that surface: half-forgotten archives, open directory strata, and fragmented records where high-signal material often survives after mainstream visibility decays.</p>
+
+                    <p>Its operating pattern is simple but compounding: one pass to identify candidate basins, a second pass to separate accidental noise from structural signal, and a third pass to extract pathways that remain stable under query mutation. The value is not only in finding links; it is in finding <em>repeatable routes</em> through information terrain that changes under observation.</p>
+
+                    <p>Technically, The Dork combines dork query construction, open-directory discovery, and metasearch routing with anonymity-aware defaults. Practically, that means a user can start with a vague target and converge toward recoverable artifacts—source trees, old documentation, media mirrors, academic remnants—without hand-building every reconnaissance step.</p>
+
+                    <p>This is now in the showcase because it is externally usable: setup is documented, workflows are explicit, and the system performs for real retrieval tasks instead of only internal demos. In KVC terms, it moved from prototype omen to deployable instrument.</p>
+
+                    <p>If you want command-level usage and baseline installation details, use the canonical README. This panel is the operational intent; the README is the execution map.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const card = document.getElementById('dork-card');
+            const overlay = document.getElementById('project-overlay');
+            const closeBtn = document.getElementById('close-overlay');
+
+            function openOverlay() {
+                overlay.classList.add('open');
+                overlay.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeOverlay() {
+                overlay.classList.remove('open');
+                overlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            card.addEventListener('click', openOverlay);
+            card.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                    ev.preventDefault();
+                    openOverlay();
+                }
+            });
+
+            closeBtn.addEventListener('click', closeOverlay);
+            overlay.addEventListener('click', (ev) => {
+                if (ev.target === overlay) closeOverlay();
+            });
+
+            document.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Escape' && overlay.classList.contains('open')) {
+                    closeOverlay();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
