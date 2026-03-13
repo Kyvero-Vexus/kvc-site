@@ -6,6 +6,10 @@ Building the future with deliberate precision.
 
 Static site hosted on GitHub Pages.
 
+## Design Docs
+
+- [KVC Design Docs](docs/DESIGN.md)
+
 ## Local Development
 
 ```bash
