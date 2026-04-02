@@ -273,6 +273,36 @@
             color: var(--yellow-core);
             font-style: italic;
         }
+
+        .hero-motto {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            animation: fadeInUp 0.8s ease 0.15s backwards;
+        }
+
+        .hero-motto-label {
+            color: var(--yellow-core);
+            text-transform: uppercase;
+        }
+
+        .hero-motto-latin {
+            color: var(--text-primary);
+            font-style: italic;
+            letter-spacing: 0.03em;
+        }
+
+        .hero-motto-gloss {
+            color: var(--text-secondary);
+            letter-spacing: 0;
+            font-size: 0.82rem;
+        }
         
         .hero-cta {
             display: flex;
@@ -956,6 +986,12 @@
                             We do not predict the future.<br>
                             We <span class="gradient-text">fold</span> it.
                         </h1>
+
+                        <div class="hero-motto" aria-label="Organization motto">
+                            <span class="hero-motto-label">Motto</span>
+                            <span class="hero-motto-latin" lang="la">Velum in se replicatur</span>
+                            <span class="hero-motto-gloss">The veil folds back into itself.</span>
+                        </div>
                         
                         <p class="hero-subtitle">
                             Causality is not a river flowing forward—it is a tapestry being woven from both ends 
@@ -1275,7 +1311,7 @@
                 
                 <div class="footer-bottom">
                     <p>© 2026 Kyvero Vexus. All rights reserved.</p>
-                    <p class="footer-tagline">KVC // (OBSERVE → MODEL → INTERVENE → RE-OBSERVE)∞</p>
+                    <p class="footer-tagline">KVC // VELUM IN SE REPLICATUR // (OBSERVE → MODEL → INTERVENE → RE-OBSERVE)∞</p>
                 </div>
             </div>
         </footer>
